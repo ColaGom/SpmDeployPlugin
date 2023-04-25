@@ -2,11 +2,26 @@ package com.colagom.plugin
 
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.Zip
+import org.gradle.kotlin.dsl.register
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.charset.Charset
+
+internal fun Project.zipTask(extension: SpmDeployPluginExtension) =
+    tasks.register<Zip>("zip") {
+        group = GROUP_NAME
+
+        val zipFile = zipFile
+        val from = "${frameworkPath()}/${extension.buildType.get().name}"
+
+        from(from)
+
+        destinationDirectory.set(zipFile.parentFile)
+        archiveFileName.set(zipFile.name)
+    }
 
 
 internal fun Project.generatePackageFileTask(extension: SpmDeployPluginExtension) =
@@ -31,8 +46,19 @@ internal fun Project.generatePackageFileTask(extension: SpmDeployPluginExtension
         })
     }
 
-internal fun Project.podPublishTask(extension: SpmDeployPluginExtension): TaskProvider<Task> {
-    return tasks.named(podPublishTaskName(extension.buildType.get()))
+internal fun Project.createXCFrameworkTask(extension: SpmDeployPluginExtension): TaskProvider<XCFrameworkTask> {
+    val buildType = extension.buildType.get()
+    val kotlinExtension = kotlinExtension
+
+    return tasks.register<XCFrameworkTask>("${buildType.name.toLowerCase()}XCFramework") {
+        group = GROUP_NAME
+        kotlinExtension.appleTargets.forEach {
+            from(it.binaries.getFramework(buildType))
+        }
+        outputDir = file(frameworkPath())
+        this.buildType = buildType
+        baseName = extension.frameworkName
+    }
 }
 
 private fun Project.generateSpmChecksum(zipFile: File): String {

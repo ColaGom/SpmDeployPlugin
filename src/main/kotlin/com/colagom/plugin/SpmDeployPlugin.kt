@@ -18,7 +18,7 @@ class SpmDeployPlugin : Plugin<Project> {
 
         afterEvaluate {
             val zipTask = zipTask(extension)
-            val publishTask = podPublishTask(extension)
+            val xcFrameworkTask = createXCFrameworkTask(extension)
             val spmTask = generatePackageFileTask(extension)
 
             configPublishingTask(spmTask)
@@ -28,30 +28,11 @@ class SpmDeployPlugin : Plugin<Project> {
             }
 
             zipTask.configure {
-                dependsOn(publishTask)
+                dependsOn(xcFrameworkTask)
             }
         }
     }
 }
-
-
-internal fun Project.zipTask(extension: SpmDeployPluginExtension) =
-    tasks.register<Zip>("zip") {
-        group = GROUP_NAME
-
-        val zipFile = zipFile
-        val from = frameworkPath(extension.buildType.get())
-
-        exclude {
-            it.file.extension == "podspec"
-        }
-
-        from(from)
-
-        destinationDirectory.set(zipFile.parentFile)
-        archiveFileName.set(zipFile.name)
-    }
-
 
 interface SpmDeployPluginExtension {
     val buildType: Property<NativeBuildType>
