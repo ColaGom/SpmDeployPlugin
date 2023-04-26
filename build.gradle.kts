@@ -5,19 +5,10 @@ plugins {
     id("com.gradle.plugin-publish") version "1.2.0"
 }
 
-group = "com.colagom.plugin"
+group = "io.github.colagom.plugin"
 version = "1.0.0"
 
 repositories {
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://github.com/ColaGom/SpmDeployPlugin")
-        credentials {
-            username = project.findProperty("github_username")?.toString() ?: System.getenv("github_username")
-            password = project.findProperty("github_password")?.toString() ?: System.getenv("github_password")
-        }
-    }
-
     mavenCentral()
 }
 
@@ -31,7 +22,7 @@ pluginBundle {
 gradlePlugin {
     plugins {
         create("SpmDeployPlugin") {
-            id = "com.colagom.plugin.deploy"
+            id = "io.github.colagom.deploy"
             implementationClass = "com.colagom.plugin.SpmDeployPlugin"
             displayName = "SpmDeployPlugin"
             description = "Deploy Kotlin Multiplatform Framework to SPM"

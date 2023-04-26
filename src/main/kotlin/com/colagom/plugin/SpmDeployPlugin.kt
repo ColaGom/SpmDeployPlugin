@@ -3,9 +3,7 @@ package com.colagom.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 
