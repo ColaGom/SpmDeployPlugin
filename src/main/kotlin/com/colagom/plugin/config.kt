@@ -9,7 +9,7 @@ import org.gradle.api.tasks.bundling.Zip
 
 private const val ARTIFACT_ID = "shared"
 
-fun Project.configPublishingTask(spmTask: TaskProvider<Task>) {
+internal fun Project.configPublishingTask(dependsTask: TaskProvider<Task>) {
     val publishingExt = publishingExtension
     val deployExt = deployExtension
 
@@ -40,6 +40,6 @@ fun Project.configPublishingTask(spmTask: TaskProvider<Task>) {
         "publish${publicationName}PublicationToGitHubPackagesRepository"
 
     tasks.named(publishTaskName).configure {
-        dependsOn(spmTask)
+        dependsOn(dependsTask)
     }
 }

@@ -15,18 +15,18 @@ class SpmDeployPlugin : Plugin<Project> {
         extension.publicationName.convention("SunflowerKMM")
 
         afterEvaluate {
+            val createXCFrameworkTask = createXCFrameworkTask(extension)
             val zipTask = zipTask(extension)
-            val xcFrameworkTask = createXCFrameworkTask(extension)
-            val spmTask = generatePackageFileTask(extension)
+            val generatePackageFileTask = generatePackageFileTask(extension)
 
-            configPublishingTask(spmTask)
+            configPublishingTask(generatePackageFileTask)
 
-            spmTask.configure {
+            generatePackageFileTask.configure {
                 dependsOn(zipTask)
             }
 
             zipTask.configure {
-                dependsOn(xcFrameworkTask)
+                dependsOn(createXCFrameworkTask)
             }
         }
     }
